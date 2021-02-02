@@ -15,7 +15,7 @@ namespace SqlDataProviderSslHttp2.Controllers
     [Route("[controller]")]
     public class SqlClientController : ControllerBase
     {
-        public const string HackyConString = "replaceConnectionString";
+
         private static SqlConnection con;
         private static SqlCommand cmd;
         private static SqlDataReader dataReader;
@@ -31,7 +31,7 @@ namespace SqlDataProviderSslHttp2.Controllers
         [Route("OpenConnection")]
         public async Task<HttpResponseMessage> OpenConnection()
         {
-            con = new SqlConnection(HackyConString);
+            con = new SqlConnection(ISqlMethods.HackyConString);
             con.Open();
             return new HttpResponseMessage(HttpStatusCode.OK);
         }

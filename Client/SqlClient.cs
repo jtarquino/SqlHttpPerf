@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SqlDataProviderSslHttp2;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -17,7 +18,8 @@ namespace HttpHandler
         private const string getRows = "https://localhost:5001/SqlClient/GetRows";
         private const string closeReader = "https://localhost:5001/SqlClient/CloseReader";
         private const string closeConnection = "https://localhost:5001/SqlClient/CloseConnection";
-        public const string HackyConString = "replaceForConnectionstring";
+        public const string HackyConString = "youConnectinString";
+
         public void ReadData()
         {
             var sw = new Stopwatch();
@@ -44,13 +46,13 @@ namespace HttpHandler
 
             sw.Reset();
             sw.Start();
-            ReadeDataFromSql();
+            ReadDataFromSql();
             Console.WriteLine($"Sql Native: {sw.ElapsedMilliseconds} milliseconds");
         }
 
         private void ReadDataFromHttp()
         {
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 Execute(openConnection);
                 Execute(createCommand);
@@ -62,7 +64,16 @@ namespace HttpHandler
             }
         }
 
-        private void ReadeDataFromSql()
+        private void ReadDataFromSql()
+        {
+            for (int i = 0; i < 1000; i++)
+            {
+                ReadeDataFromSqlOnce();
+                if (i % 10 == 0) { Console.WriteLine(i); }
+            }
+        }
+
+        private void ReadeDataFromSqlOnce()
         {
             var con = new SqlConnection(HackyConString);
             con.Open();

@@ -28,6 +28,7 @@ namespace SqlDataProviderSslHttp2
         {
 
             services.AddControllers();
+            services.AddSignalR();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SqlDataProviderSslHttp2", Version = "v1" });
@@ -53,6 +54,7 @@ namespace SqlDataProviderSslHttp2
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<RSql>("/rSqlEndpoint");
             });
         }
     }

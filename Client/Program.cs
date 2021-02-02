@@ -10,6 +10,8 @@ namespace HttpHandler
         {
             var sqlClient = new SqlClient();
             sqlClient.ReadData();
+            //SignalRSqlClient signalRClient = new SignalRSqlClient();
+            //signalRClient.OpenConnection().GetAwaiter().GetResult();
             Console.ReadLine();
         }
 
