@@ -3,7 +3,7 @@
     <TargetFrameworks>net462</TargetFrameworks>
 	<OutputType>Exe</OutputType>
   </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)' != 'net5.0'">
+  <ItemGroup>
     <PackageReference Include="System.Net.Http.WinHttpHandler" version="5.0.0" />
   </ItemGroup>
     <ItemGroup>

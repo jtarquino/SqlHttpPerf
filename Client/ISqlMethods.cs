@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 
 
-namespace SqlDataProviderSslHttp2
+namespace HttpHandler
 {
     public interface ISqlMethods
     {
@@ -12,5 +12,10 @@ namespace SqlDataProviderSslHttp2
         Task ExecuteReader();
         Task<byte[]> GetRows();
         Task OpenConnection();
+    }
+
+    public class ConString
+    {
+        public const string HackyConString = "YourOwnConnectionString";
     }
 }

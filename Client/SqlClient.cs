@@ -16,9 +16,11 @@ namespace HttpHandler
         private const string createCommand = "https://localhost:5001/SqlClient/CreateCommand";
         private const string executeReader = "https://localhost:5001/SqlClient/ExecuteReader";
         private const string getRows = "https://localhost:5001/SqlClient/GetRows";
+        private const string getRowsBatch = "https://localhost:5001/SqlClient/GetRowsBatch";
         private const string closeReader = "https://localhost:5001/SqlClient/CloseReader";
         private const string closeConnection = "https://localhost:5001/SqlClient/CloseConnection";
-        public const string HackyConString = "youConnectinString";
+        private const string doNothing= "https://localhost:5001/SqlClient/DoNothing";
+        
 
         public void ReadData()
         {
@@ -27,27 +29,44 @@ namespace HttpHandler
             client = new HttpClient();
             sw.Reset();
             sw.Start();
-            ReadDataFromHttp();
-            Console.WriteLine($"Http1: {sw.ElapsedMilliseconds} milliseconds");
+            DoNothingThousand();
+            var result1 = $"Http1 that does nothing: {sw.ElapsedMilliseconds} milliseconds";
+            
 
-#if NETFRAMEWORK
             client = new HttpClient(new ForceHttp2Handler(new WinHttpHandler()));
-#else
-            client = new HttpClient()
-            {
-                DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact,
-                DefaultRequestVersion = System.Net.HttpVersion.Version20
-            };
-#endif
+            sw.Reset();
+            sw.Start();
+            DoNothingThousand();
+            var result2 = $"Http2 that does nothing: {sw.ElapsedMilliseconds} milliseconds";
+
+            client = new HttpClient();
             sw.Reset();
             sw.Start();
             ReadDataFromHttp();
-            Console.WriteLine($"Http2: {sw.ElapsedMilliseconds} milliseconds");
+            var result3 = $"Http1: {sw.ElapsedMilliseconds} milliseconds";
+
+            client = new HttpClient(new ForceHttp2Handler(new WinHttpHandler()));
+            sw.Reset();
+            sw.Start();
+            ReadDataFromHttp();
+            var result4 = $"Http2: {sw.ElapsedMilliseconds} milliseconds";
 
             sw.Reset();
             sw.Start();
             ReadDataFromSql();
-            Console.WriteLine($"Sql Native: {sw.ElapsedMilliseconds} milliseconds");
+            var result5= $"Sql Native: {sw.ElapsedMilliseconds} milliseconds";
+
+
+            Console.WriteLine(result1);
+            Console.WriteLine(result2);
+            Console.WriteLine(result3);
+            Console.WriteLine(result4);
+            Console.WriteLine(result5);
+            //client = new HttpClient();
+            //sw.Reset();
+            //sw.Start();
+            //ReadDataFromHttpBatch();
+            //Console.WriteLine($"Http1 Batch: {sw.ElapsedMilliseconds} milliseconds");
         }
 
         private void ReadDataFromHttp()
@@ -58,6 +77,26 @@ namespace HttpHandler
                 Execute(createCommand);
                 Execute(executeReader);
                 Execute(getRows);
+                Execute(closeReader);
+                Execute(closeConnection);
+                if (i % 10 == 0) { Console.WriteLine(i); }
+            }
+        }
+
+        private void DoNothingThousand()
+        {
+            for (int i = 0; i < 1000; i++)
+            {
+                Execute(doNothing);
+                if (i % 10 == 0) { Console.WriteLine(i); }
+            }
+        }
+
+        private void ReadDataFromHttpBatch()
+        {
+            for (int i = 0; i < 1000; i++)
+            {
+                Execute(getRowsBatch);
                 Execute(closeReader);
                 Execute(closeConnection);
                 if (i % 10 == 0) { Console.WriteLine(i); }
@@ -75,7 +114,7 @@ namespace HttpHandler
 
         private void ReadeDataFromSqlOnce()
         {
-            var con = new SqlConnection(HackyConString);
+            var con = new SqlConnection(ConString.HackyConString);
             con.Open();
             var cmd = con.CreateCommand();
             cmd.CommandText = "select top 1 ProductCategoryID FROM [SalesLT].[ProductCategory]";
@@ -101,7 +140,6 @@ namespace HttpHandler
 
         private void Execute(string url)
         {
-            //Console.WriteLine(url);
             HttpResponseMessage response = client.GetAsync(url).GetAwaiter().GetResult();
             if (response.IsSuccessStatusCode)
             {

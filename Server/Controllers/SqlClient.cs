@@ -26,6 +26,11 @@ namespace SqlDataProviderSslHttp2.Controllers
             return "helloWorld";
         }
 
+        [HttpGet]
+        [Route("DoNothing")]
+        public async Task DoNothing()
+        {
+        }
 
         [HttpGet]
         [Route("OpenConnection")]
@@ -73,6 +78,18 @@ namespace SqlDataProviderSslHttp2.Controllers
             var response = CreateByteArrayResponse(responseBytes);
 
             return await Task.FromResult(response).ConfigureAwait(false);
+        }
+
+        [Route("GetRowsBatch")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> GetRowsBacth() 
+        {
+            con = new SqlConnection(ISqlMethods.HackyConString);
+            con.Open();
+            cmd = con.CreateCommand();
+            cmd.CommandText = "select top 1 ProductCategoryID FROM [SalesLT].[ProductCategory]";
+            dataReader = cmd.ExecuteReader();
+            return await GetRows().ConfigureAwait(false);
         }
 
         [Route("CloseReader")]

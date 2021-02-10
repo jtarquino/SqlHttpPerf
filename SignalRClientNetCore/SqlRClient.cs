@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
+﻿using Microsoft.AspNetCore.Http.Connections;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -21,8 +22,13 @@ namespace CsharpClient
             connection = new HubConnectionBuilder()
             .WithUrl("https://localhost:5001/rSqlEndpoint")
             .Build();
+            /*
+            connection = new HubConnectionBuilder()
+            .WithUrl("https://localhost:5001/rSqlEndpoint", HttpTransportType.LongPolling)
+            .Build();
+            */
             await connection.StartAsync();
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 await OpenConnection();
                 await CreateCommand();

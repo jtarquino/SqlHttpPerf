@@ -22,7 +22,6 @@ namespace HttpHandler
             Console.ReadLine();
             string url = "https://localhost:5001/WeatherForecast";
 
-#if NETFRAMEWORK
             using (var client = new HttpClient(new WinHttpHandler()))
             {
                 client.BaseAddress = new Uri(url);
@@ -50,7 +49,6 @@ namespace HttpHandler
                     Console.WriteLine(response.StatusCode);
                 }
             }
-#endif
             Console.WriteLine("Call httpv1");
             Console.ReadLine();
             using (var client = new HttpClient())
